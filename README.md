@@ -1,4 +1,101 @@
-# Cloudflare 上建workers和pages节点及自动化优选IP的一揽子工具
+# ☁️ fork-cvwt - Cloudflare Workers工具集
+
+![License](https://img.shields.io/badge/License-Unknown-lightgrey)
+
+## 📖 项目简介
+
+fork-cvwt是Cloudflare Workers和Pages节点部署工具,提供VLESS/Trojan代理节点创建、IP优选、自动化部署等功能。
+
+## 📦 项目来源
+
+- **原项目**: 未知(待确认)
+- **原作者**: 未知
+- **开源协议**: 未明确标注(需查看原项目)
+- **Fork时间**: 2024年
+
+## 🔧 二次开发内容
+
+本项目为原项目的学习研究版本,主要用于:
+- 学习Cloudflare Workers的部署方法
+- 研究IP优选算法的实现
+- 了解代理协议的配置和管理
+
+## ⚠️ 免责声明
+
+本项目仅供学习研究使用,请勿用于非法用途。使用本项目所产生的一切后果由使用者自行承担。
+
+## 系统架构 | System Architecture
+
+```mermaid
+graph TB
+    subgraph Tools["🔧 工具集"]
+        A[CloudflareSpeedTest] --> B[IP优选引擎]
+        C[VLESS Workers] --> D[代理节点创建]
+        E[Trojan Workers] --> D
+        F[Pages部署] --> G[静态页面托管]
+    end
+    
+    subgraph SpeedTest["⚡ IP优选流程"]
+        H[IP段数据] --> I[延迟测速<br/>TCPing/HTTPing]
+        I --> J[下载测速]
+        J --> K{筛选条件}
+        K -->|延迟上限| L[过滤低延迟IP]
+        K -->|丢包率| M[过滤稳定IP]
+        K -->|下载速度| N[过滤高速IP]
+        L --> O[结果排序]
+        M --> O
+        N --> O
+        O --> P[输出CSV]
+    end
+    
+    subgraph Deployment["🚀 部署流程"]
+        Q[Workers代码] --> R[Cloudflare API]
+        R --> S[创建Worker]
+        S --> T[配置路由]
+        T --> U[绑定域名]
+        U --> V[节点上线]
+    end
+    
+    subgraph Config["⚙️ 配置管理"]
+        W[统一配置格式] --> X[UUID/密码]
+        X --> Y[代理协议选择]
+        Y --> Z[端口与路径]
+    end
+    
+    style A fill:#e1f5ff
+    style C fill:#e1f5ff
+    style E fill:#e1f5ff
+    style V fill:#c8e6c9
+    style P fill:#c8e6c9
+```
+
+## 优选IP算法流程 | IP Optimization Flow
+
+```mermaid
+flowchart LR
+    Start([开始]) --> A[加载IP段数据]
+    A --> B{测速模式?}
+    B -->|TCPing| C[TCP延迟测试]
+    B -->|HTTPing| D[HTTP延迟测试]
+    C --> E[按延迟排序]
+    D --> E
+    E --> F[选择Top N候选IP]
+    F --> G[下载速度测试]
+    G --> H{筛选条件}
+    H -->|延迟| I[≤ tl ms]
+    H -->|丢包| J[≤ tlr]
+    H -->|速度| K[≥ sl MB/s]
+    I --> L[地区过滤<br/>可选]
+    J --> L
+    K --> L
+    L --> M[结果输出CSV]
+    M --> End([结束])
+    
+    style Start fill:#e1f5ff
+    style End fill:#c8e6c9
+    style B fill:#fff9c4
+    style H fill:#fff9c4
+```
 
 
 
