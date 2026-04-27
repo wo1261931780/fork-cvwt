@@ -1,6 +1,6 @@
 // src/worker.js
 import { connect } from "cloudflare:sockets";
-let sha224Password = '7e89e622d89becc4299c2d74494b9fb15759f2b0ff47b20eeae867e2';
+let sha224Password = '${TROJAN_SHA224_PASSWORD}';
 let pwd = 'abc123333'
 const proxyIPs = ["cdn.xn--b6gac.eu.org"]; //workers.cloudflare.cyou bestproxy.onecf.eu.org cdn-all.xn--b6gac.eu.org cdn.xn--b6gac.eu.org
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
